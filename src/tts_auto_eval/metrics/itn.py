@@ -67,10 +67,9 @@ class ITNMetric(BaseMetric):
 
     def _normalize(self, text: str) -> str:
         """비교를 위한 텍스트 정규화."""
-        text = text.lower()
-        text = re.sub(r"[^\w\s가-힣ㄱ-ㅎㅏ-ㅣa-z0-9]", " ", text)
-        text = re.sub(r"\s+", " ", text).strip()
-        return text
+        from tts_auto_eval.metrics.intelligibility import normalize_text
+
+        return normalize_text(text, self._language)
 
     def evaluate_sample(
         self,

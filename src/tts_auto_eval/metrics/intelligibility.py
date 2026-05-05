@@ -16,10 +16,27 @@ def normalize_text_ko(text: str) -> str:
     구두점 제거, 소문자 변환, 다중 공백 제거.
     """
     text = text.lower()
-    # 구두점 제거 (한글, 영문, 숫자, 공백만 유지)
     text = re.sub(r"[^\w\s가-힣ㄱ-ㅎㅏ-ㅣa-z0-9]", " ", text)
     text = re.sub(r"\s+", " ", text).strip()
     return text
+
+
+def normalize_text_en(text: str) -> str:
+    """영어 텍스트 정규화.
+
+    ZipVoice seedtts.py 참고: 구두점 제거, 소문자 변환, 다중 공백 제거.
+    """
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9'\s]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
+def normalize_text(text: str, language: str = "ko") -> str:
+    """언어에 따른 텍스트 정규화."""
+    if language == "en":
+        return normalize_text_en(text)
+    return normalize_text_ko(text)
 
 
 class WERMetric(BaseMetric):
@@ -93,8 +110,8 @@ class WERMetric(BaseMetric):
 
         transcription = self._transcribe(audio, sr)
 
-        ref_normalized = normalize_text_ko(text)
-        hyp_normalized = normalize_text_ko(transcription)
+        ref_normalized = normalize_text(text, self._language)
+        hyp_normalized = normalize_text(transcription, self._language)
 
         if not ref_normalized:
             return MetricResult(

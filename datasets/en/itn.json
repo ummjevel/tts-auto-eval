@@ -1,0 +1,146 @@
+{
+  "language": "en",
+  "category": "itn",
+  "items": [
+    {
+      "id": "itn_en_001",
+      "text": "There are 123 participants in total.",
+      "expected_spoken": "there are one hundred twenty three participants in total",
+      "tags": ["number"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "itn_en_002",
+      "text": "The building was completed on March 15, 2024.",
+      "expected_spoken": "the building was completed on march fifteenth twenty twenty four",
+      "tags": ["date"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_en_003",
+      "text": "The meeting starts at 3:30 PM.",
+      "expected_spoken": "the meeting starts at three thirty pm",
+      "tags": ["time"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_en_004",
+      "text": "The total cost is $1,500,000.",
+      "expected_spoken": "the total cost is one million five hundred thousand dollars",
+      "tags": ["currency"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_en_005",
+      "text": "Please call 1-800-555-0199 for assistance.",
+      "expected_spoken": "please call one eight hundred five five five zero one nine nine for assistance",
+      "tags": ["phone"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_en_006",
+      "text": "The growth rate was 3.14%.",
+      "expected_spoken": "the growth rate was three point one four percent",
+      "tags": ["percentage"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_en_007",
+      "text": "The speed limit is 100 km/h.",
+      "expected_spoken": "the speed limit is one hundred kilometers per hour",
+      "tags": ["unit"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_en_008",
+      "text": "The WHO issued new guidelines today.",
+      "expected_spoken": "the w h o issued new guidelines today",
+      "tags": ["abbreviation"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_en_009",
+      "text": "The price dropped from $29.99 to $19.99.",
+      "expected_spoken": "the price dropped from twenty nine ninety nine to nineteen ninety nine",
+      "tags": ["currency"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_en_010",
+      "text": "This product weighs 2.5 kg.",
+      "expected_spoken": "this product weighs two point five kilograms",
+      "tags": ["unit"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "itn_en_011",
+      "text": "The city has a population of approximately 9,700,000.",
+      "expected_spoken": "the city has a population of approximately nine million seven hundred thousand",
+      "tags": ["number"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_en_012",
+      "text": "Take the 11:05 AM train to Boston.",
+      "expected_spoken": "take the eleven oh five am train to boston",
+      "tags": ["time"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_en_013",
+      "text": "Prizes are available for 1st through 3rd place.",
+      "expected_spoken": "prizes are available for first through third place",
+      "tags": ["ordinal"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "itn_en_014",
+      "text": "The room measures 33.5 m².",
+      "expected_spoken": "the room measures thirty three point five square meters",
+      "tags": ["unit"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_en_015",
+      "text": "The account number is 110-123-456789.",
+      "expected_spoken": "the account number is one one zero one two three four five six seven eight nine",
+      "tags": ["number"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_en_016",
+      "text": "The temperature dropped to -5°C.",
+      "expected_spoken": "the temperature dropped to minus five degrees celsius",
+      "tags": ["unit", "number"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_en_017",
+      "text": "The ratio was split 3:7.",
+      "expected_spoken": "the ratio was split three to seven",
+      "tags": ["ratio"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_en_018",
+      "text": "Q1 2025 revenue was $2,300,000,000.",
+      "expected_spoken": "q one twenty twenty five revenue was two point three billion dollars",
+      "tags": ["date", "currency"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_en_019",
+      "text": "My email is test@example.com.",
+      "expected_spoken": "my email is test at example dot com",
+      "tags": ["email"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_en_020",
+      "text": "We need 500 sheets of A4 paper.",
+      "expected_spoken": "we need five hundred sheets of a four paper",
+      "tags": ["abbreviation", "number"],
+      "difficulty": "medium"
+    }
+  ]
+}

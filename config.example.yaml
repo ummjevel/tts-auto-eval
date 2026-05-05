@@ -1,43 +1,85 @@
 # TTS Auto Eval 설정 예시
 
+# ──────────────────────────────────────────────
 # 모델 설정
+# ──────────────────────────────────────────────
+# 빌트인 모델: f5-tts, coqui, cosyvoice, openai
+# 커스텀 모델: type: custom + module 지정
+
+# --- F5-TTS 예시 ---
+# model:
+#   type: f5-tts
+#   params:
+#     ref_audio: ./reference.wav
+#     ref_text: "참조 음성의 텍스트"
+
+# --- Coqui XTTS 예시 ---
+# model:
+#   type: coqui
+#   params:
+#     model_name: tts_models/multilingual/multi-dataset/xtts_v2
+#     speaker_wav: ./reference.wav
+#     language: ko
+
+# --- CosyVoice 예시 ---
+# model:
+#   type: cosyvoice
+#   params:
+#     model_dir: ./pretrained_models/CosyVoice-300M
+#     ref_audio: ./reference.wav
+#     ref_text: "참조 음성의 텍스트"
+
+# --- OpenAI TTS 예시 (OPENAI_API_KEY 환경변수 필요) ---
+# model:
+#   type: openai
+#   params:
+#     model: tts-1-hd
+#     voice: alloy
+
+# --- 커스텀 모델 예시 ---
 model:
   type: custom
-  module: my_tts_model.MyTTS      # BaseTTSModel 구현 클래스
+  module: my_tts_model.MyTTS          # BaseTTSModel 구현 클래스
   params:
     checkpoint: ./checkpoints/model.pt
 
+# ──────────────────────────────────────────────
 # 평가 설정
+# ──────────────────────────────────────────────
 evaluation:
-  language: ko
+  language: ko                          # ko 또는 en
   metrics:
-    - utmos                         # MOS 예측 (1-5)
-    - wer                           # Word/Character Error Rate
-    # - pesq                        # PESQ (참조 음성 필요)
-    # - stoi                        # STOI (참조 음성 필요)
-    # - speaker_similarity          # 화자 유사도 (참조 음성 필요)
-    # - prosody                     # 운율 분석 (F0, 에너지, 발화 속도)
-    # - fad                         # Frechet Audio Distance
-    # - itn                         # ITN 카테고리별 WER
-  whisper_model: large-v3           # Whisper 모델 크기 (tiny, base, small, medium, large-v3)
-  device: cpu                       # cpu 또는 cuda
-  reference_audio: null             # 참조 음성 경로 (speaker_similarity, pesq, stoi에 필요)
-  model_cache_dir: .cache           # 모델 체크포인트 캐시 디렉토리
+    - utmos                             # MOS 예측 (1-5)
+    - wer                               # Word/Character Error Rate
+    # - pesq                            # PESQ (참조 음성 필요)
+    # - stoi                            # STOI (참조 음성 필요)
+    # - speaker_similarity              # 화자 유사도 (참조 음성 필요)
+    # - prosody                         # 운율 분석 (F0, 에너지, 발화 속도)
+    # - fad                             # Frechet Audio Distance
+    # - itn                             # ITN 카테고리별 WER
+  whisper_model: large-v3               # tiny, base, small, medium, large-v3
+  device: cpu                           # cpu 또는 cuda
+  reference_audio: null                 # 참조 음성 (speaker_similarity, pesq, stoi)
+  model_cache_dir: .cache               # 모델 캐시 디렉토리
 
+# ──────────────────────────────────────────────
 # 데이터셋
+# ──────────────────────────────────────────────
 dataset:
-  path: ./datasets/ko/
-  categories: null                  # null이면 전부, 리스트면 해당 카테고리만
+  path: ./datasets/ko/                  # ko/ 또는 en/
+  categories: null                      # null이면 전부
     # - general
     # - itn
-  max_samples: null                 # null이면 전부, 숫자면 카테고리당 최대 샘플 수
+  max_samples: null                     # null이면 전부
 
+# ──────────────────────────────────────────────
 # 리포트
+# ──────────────────────────────────────────────
 report:
   formats:
     - html
     - csv
     - markdown
   output_dir: ./results/
-  compare_with: null                # 이전 result.json 경로 (비교 시)
-  include_audio: true               # HTML에 오디오 임베드
+  compare_with: null                    # 이전 result.json 경로
+  include_audio: true                   # HTML에 오디오 임베드

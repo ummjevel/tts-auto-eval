@@ -381,23 +381,34 @@ tts-auto-eval/
 - [x] 모델 캐시 디렉토리 통합 (.cache/ 하위, 설정으로 변경 가능)
 - [x] 참조 음성 로드 및 전달 (speaker_similarity, pesq, stoi)
 
-### Phase 3: 다국어 + 추가 백엔드
-- [ ] 영어 데이터셋 및 ITN
-- [ ] 추가 TTS 백엔드 (CosyVoice, Coqui, F5-TTS 어댑터)
-- [ ] 리포트 비교 대시보드 고도화
+### Phase 3: 다국어 + 추가 백엔드 -- DONE
+- [x] 영어 데이터셋: general 20문장 + ITN 20문항
+- [x] 텍스트 정규화 다국어 지원 (normalize_text_en, normalize_text_ko → language 파라미터)
+- [x] TTS 백엔드 어댑터 4종: F5-TTS, Coqui/XTTS, CosyVoice, OpenAI TTS
+- [x] 빌트인 모델 자동 로딩 (_BUILTIN_MODELS 레지스트리)
+- [x] config.example.yaml에 모델별 설정 예시 추가
 
-### Phase 4: 고도화
-- [ ] **실시간 A/B 테스트**: 두 모델을 동시에 돌려서 동일 텍스트로 비교 평가
-- [ ] **CI/CD 통합**: GitHub Actions로 모델 체크포인트 변경 시 자동 평가 + 리포트 PR 코멘트
-- [ ] **Whisper 외 ASR 백엔드**: Paraformer (중국어), Conformer, faster-whisper (속도 최적화)
-- [ ] **MOS 주관 평가 연동**: 자동 평가와 사람 평가를 매핑하여 상관도 분석
-- [ ] **긴 문장/문단 평가**: long-form 데이터셋 + 문단 단위 운율 일관성 지표
-- [ ] **스트리밍 TTS 평가**: 첫 음절 지연시간(TTFB), 청크 간 이음새 품질
-- [ ] **감정/스타일 평가**: 감정 분류기로 의도한 감정 전달 정확도 측정
-- [ ] **다화자 대화 TTS**: cpSIM/cpWER (ZipVoice 참고) + 화자 전환 자연스러움
-- [ ] **웹 UI 대시보드**: Streamlit/Gradio 기반 인터랙티브 평가 + 오디오 비교 재생
-- [ ] **벤치마크 리더보드**: 여러 모델 결과를 누적하여 자동 랭킹 테이블 생성
-- [ ] **평가 데이터셋 자동 생성**: LLM으로 도메인별 테스트 문장 생성 (의료, 법률, 방송 등)
+### Phase 4: 실전 운영
+- [ ] **실시간 A/B 테스트**: `tts-auto-eval ab --model-a X --model-b Y` — 동일 텍스트로 두 모델 동시 평가, 지표별 승률 표
+- [ ] **CI/CD 통합**: GitHub Actions workflow 제공. 모델 체크포인트 변경 시 자동 eval → PR에 리포트 코멘트로 게시
+- [ ] **벤치마크 리더보드**: 여러 모델 result.json을 누적하여 자동 랭킹 테이블 생성 (`tts-auto-eval leaderboard`)
+- [ ] **faster-whisper 백엔드**: openai-whisper 대비 3-4배 빠른 CTranslate2 기반 ASR. 대규모 평가 시 병목 해소
+
+### Phase 5: 평가 깊이 확장
+- [ ] **스트리밍 TTS 평가**: 첫 음절 지연시간(TTFB), 청크 간 이음새 품질, 실시간 합성 안정성
+- [ ] **감정/스타일 평가**: SER(Speech Emotion Recognition) 분류기로 의도한 감정 전달 정확도 측정. "슬프게 말해줘" 같은 지시 이행 검증
+- [ ] **긴 문장/문단 평가**: long-form 데이터셋 + 문단 단위 운율 일관성 (F0 drift, 에너지 감쇠, 호흡 위치 자연스러움)
+- [ ] **다화자 대화 TTS**: cpSIM/cpWER (ZipVoice 참고) + pyannote 화자분리 + 화자 전환 자연스러움
+- [ ] **MOS 주관 평가 연동**: 크라우드소싱 MOS 수집 → UTMOS 예측과의 상관도 분석 → 캘리브레이션 계수 산출
+- [ ] **발음 사전 기반 평가**: G2P(Grapheme-to-Phoneme) 변환 후 음소 단위 정확도 측정
+
+### Phase 6: 생산성 + 확장성
+- [ ] **웹 UI 대시보드**: Gradio/Streamlit 기반 인터랙티브 평가. 오디오 A/B 재생, 실시간 차트, 드래그앤드롭 음성 업로드
+- [ ] **평가 데이터셋 자동 생성**: LLM으로 도메인별 테스트 문장 생성 (의료, 법률, 방송, 고객센터 등). ITN 케이스 자동 확장
+- [ ] **Whisper 외 ASR 백엔드 확장**: Paraformer (중국어), Conformer, Canary (NVIDIA) — 언어별 최적 ASR 자동 선택
+- [ ] **분산 평가**: Ray/Dask로 대규모 데이터셋 병렬 평가. GPU 클러스터 지원
+- [ ] **모델 프로파일링**: 추론 속도(RTF), 메모리 사용량, GPU utilization 자동 측정 → 리포트에 포함
+- [ ] **플러그인 시스템**: 사용자 정의 지표를 파이썬 패키지로 설치하여 자동 등록 (entry_points 기반)
 
 ## 10. 기술 스택
 

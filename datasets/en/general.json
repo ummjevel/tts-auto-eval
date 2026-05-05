@@ -1,0 +1,126 @@
+{
+  "language": "en",
+  "category": "general",
+  "items": [
+    {
+      "id": "gen_en_001",
+      "text": "Hello, it's nice to meet you.",
+      "tags": ["greeting"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "gen_en_002",
+      "text": "The weather is beautiful today.",
+      "tags": ["daily"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "gen_en_003",
+      "text": "Artificial intelligence is transforming the way we live and work.",
+      "tags": ["tech"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "gen_en_004",
+      "text": "The United Nations headquarters is located in New York City.",
+      "tags": ["geography"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "gen_en_005",
+      "text": "I would like to discuss the core values of this project with you.",
+      "tags": ["formal"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "gen_en_006",
+      "text": "Recent studies suggest that sleep quality significantly impacts learning ability.",
+      "tags": ["science"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "gen_en_007",
+      "text": "She was quietly reading a book when she suddenly burst out laughing.",
+      "tags": ["narrative"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "gen_en_008",
+      "text": "As economic growth slows, the government has announced a new stimulus package.",
+      "tags": ["news"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "gen_en_009",
+      "text": "To solve this problem, a multifaceted approach is required, along with close collaboration between departments.",
+      "tags": ["formal", "complex"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "gen_en_010",
+      "text": "A gentle spring breeze blew through the park as cherry blossom petals began to fall one by one.",
+      "tags": ["literary"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "gen_en_011",
+      "text": "We sincerely appreciate your continued support and encouragement.",
+      "tags": ["formal", "speech"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "gen_en_012",
+      "text": "Please prepare the quarterly performance report for tomorrow morning's meeting.",
+      "tags": ["business"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "gen_en_013",
+      "text": "Kimchi, a traditional Korean dish, is a world-renowned fermented food.",
+      "tags": ["culture"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "gen_en_014",
+      "text": "International efforts to combat climate change are becoming increasingly important.",
+      "tags": ["environment"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "gen_en_015",
+      "text": "The children were running around the playground, having a great time.",
+      "tags": ["daily"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "gen_en_016",
+      "text": "Learning to code helps develop logical thinking and problem-solving skills.",
+      "tags": ["education", "tech"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "gen_en_017",
+      "text": "We're planning a family trip to Hawaii this weekend.",
+      "tags": ["daily", "travel"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "gen_en_018",
+      "text": "The Supreme Court ruled that the new legislation is unconstitutional.",
+      "tags": ["law", "formal"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "gen_en_019",
+      "text": "In the deep forest, a small spring bubbled up between the moss-covered rocks, its water crystal clear and cold.",
+      "tags": ["literary", "long"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "gen_en_020",
+      "text": "This product is very easy to use. Just press the power button and select the desired mode.",
+      "tags": ["instruction"],
+      "difficulty": "medium"
+    }
+  ]
+}

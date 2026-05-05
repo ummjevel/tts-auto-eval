@@ -77,17 +77,41 @@ def _create_metrics(config: Config) -> list[BaseMetric]:
     return metrics
 
 
-def _load_model(config: Config) -> BaseTTSModel | None:
-    """설정에 따라 TTS 모델 로드."""
-    if config.model.module is None:
-        return None
+_BUILTIN_MODELS = {
+    "f5-tts": ("tts_auto_eval.models.f5_tts", "F5TTSModel"),
+    "coqui": ("tts_auto_eval.models.coqui", "CoquiTTSModel"),
+    "cosyvoice": ("tts_auto_eval.models.cosyvoice", "CosyVoiceModel"),
+    "openai": ("tts_auto_eval.models.openai_tts", "OpenAITTSModel"),
+}
 
+
+def _load_model(config: Config) -> BaseTTSModel | None:
+    """설정에 따라 TTS 모델 로드.
+
+    1. type이 빌트인 모델명이면 해당 어댑터 사용
+    2. type이 'custom'이면 module 경로에서 동적 로드
+    3. module이 없으면 None 반환
+    """
     import importlib
 
-    module_path, class_name = config.model.module.rsplit(".", 1)
-    module = importlib.import_module(module_path)
-    model_class = getattr(module, class_name)
-    return model_class(**config.model.params)
+    model_type = config.model.type
+    params = config.model.params
+
+    # 빌트인 모델
+    if model_type in _BUILTIN_MODELS:
+        module_path, class_name = _BUILTIN_MODELS[model_type]
+        module = importlib.import_module(module_path)
+        model_class = getattr(module, class_name)
+        return model_class(**params)
+
+    # 커스텀 모델
+    if config.model.module:
+        module_path, class_name = config.model.module.rsplit(".", 1)
+        module = importlib.import_module(module_path)
+        model_class = getattr(module, class_name)
+        return model_class(**params)
+
+    return None
 
 
 def run_evaluation(
