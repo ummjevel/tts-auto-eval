@@ -73,17 +73,23 @@ class BaseTTSModel(ABC):
         return path
 ```
 
-### 3.2 지원 백엔드 (확장 가능)
+### 3.2 빌트인 백엔드 (구현 완료)
 
-| 백엔드 | 유형 | 비고 |
-|--------|------|------|
-| F5-TTS | 로컬 오픈소스 | `pip install f5-tts` |
-| CosyVoice | 로컬 오픈소스 | repo clone 필요 |
-| Coqui/XTTS | 로컬 오픈소스 | `pip install TTS` |
-| OpenAI TTS | 상용 API | API 키 필요, 유료 |
-| Google Cloud TTS | 상용 API | 서비스 계정 필요 |
-| Azure TTS | 상용 API | 구독 키 필요 |
-| Custom | 사용자 정의 | BaseTTSModel 상속 |
+config의 `model.type`으로 자동 로딩. `_BUILTIN_MODELS` 레지스트리에서 관리.
+
+| type (config) | 클래스 | 유형 | 설치 |
+|---------------|--------|------|------|
+| `f5-tts` | `F5TTSModel` | 로컬 오픈소스 | `pip install f5-tts` |
+| `cosyvoice` | `CosyVoiceModel` | 로컬 오픈소스 | repo clone + `pip install -e .` |
+| `coqui` | `CoquiTTSModel` | 로컬 오픈소스 | `pip install TTS` |
+| `openai` | `OpenAITTSModel` | 상용 API | `pip install openai` + `OPENAI_API_KEY` |
+| `custom` | 사용자 정의 | - | `module` 필드에 클래스 경로 지정 |
+
+미구현 (향후):
+| 백엔드 | 비고 |
+|--------|------|
+| Google Cloud TTS | 서비스 계정 필요 |
+| Azure TTS | 구독 키 필요 |
 
 ### 3.3 사용자 정의 모델 등록
 
@@ -115,11 +121,11 @@ model:
 
 ### 4.1 음질 (Quality)
 
-| 지표 | 설명 | 참조 음성 필요 | 라이브러리 |
-|------|------|:-----------:|-----------|
-| **UTMOS** | MOS 예측 (자연스러움 1-5점) | No | `speechmos` |
-| **PESQ** | 지각적 음질 (ITU-T P.862) | Yes | `pesq` |
-| **DNSMOS** | DNS 챌린지 기반 음질 예측 | No | Azure API / 로컬 |
+| 지표 | 설명 | 참조 음성 필요 | 라이브러리 | 상태 |
+|------|------|:-----------:|-----------|:----:|
+| **UTMOS** | MOS 예측 (자연스러움 1-5점), torch.hub SpeechMOS | No | `torch.hub` (tarepan/SpeechMOS) | DONE |
+| **PESQ** | 지각적 음질 (ITU-T P.862), wideband/narrowband | Yes | `pesq` | DONE |
+| **DNSMOS** | DNS 챌린지 기반 음질 예측 | No | Azure API / 로컬 | 미구현 |
 
 ### 4.2 명료도 (Intelligibility)
 
@@ -183,19 +189,19 @@ model:
 
 ## 5. 테스트 데이터셋
 
-### 5.1 구조
+### 5.1 구조 (현재)
 
 ```
 datasets/
-├── ko/                     # 한국어
-│   ├── general.json        # 일반 문장
-│   ├── itn.json            # ITN 테스트 세트
-│   └── long_form.json      # 긴 문장/문단
-├── en/                     # 영어 (추후)
-│   ├── general.json
-│   ├── itn.json
-│   └── long_form.json
-└── schema.json             # 데이터 스키마
+├── ko/                     # 한국어 (구현 완료)
+│   ├── general.json        # 일반 문장 20개
+│   └── itn.json            # ITN 테스트 세트 20개
+├── en/                     # 영어 (구현 완료)
+│   ├── general.json        # 일반 문장 20개
+│   └── itn.json            # ITN 테스트 세트 20개
+└── (향후)
+    ├── */long_form.json    # 긴 문장/문단 (Phase 5)
+    └── schema.json         # 데이터 스키마
 ```
 
 ### 5.2 데이터 형식
@@ -216,13 +222,15 @@ datasets/
 }
 ```
 
+Pydantic 모델로 스키마 검증: `TestItem`, `TestDataset` (`datasets/loader.py`)
+
 ### 5.3 언어 지원
 
-- **Phase 1**: 한국어 (ko)
-- **Phase 2**: 영어 (en)
-- **Phase 3**: 기타 언어 (확장 구조 준비)
+- **한국어 (ko)**: 구현 완료 (general 20 + ITN 20)
+- **영어 (en)**: 구현 완료 (general 20 + ITN 20)
+- **기타 언어**: 확장 구조 준비됨 (datasets/{lang}/ 디렉토리 추가)
 
-각 언어별로 Whisper 모델 크기, ITN 규칙, 음절 카운팅 방식을 설정 파일로 분리.
+텍스트 정규화는 언어별 함수로 분리 (`normalize_text_ko`, `normalize_text_en`) 후 `normalize_text(text, language)` 통합 인터페이스 제공.
 
 ## 6. 리포트
 
@@ -258,38 +266,38 @@ tts-auto-eval compare report_a.json report_b.json
 
 ## 7. 설정 파일 (config.yaml)
 
+Pydantic으로 유효성 검증. `Config > ModelConfig, EvaluationConfig, DatasetConfig, ReportConfig`.
+
 ```yaml
-# 모델 설정
+# 모델 설정 — 빌트인: f5-tts, coqui, cosyvoice, openai / 커스텀: type: custom + module
 model:
-  type: f5-tts                    # 또는 custom, openai, azure 등
+  type: f5-tts                    # 빌트인 모델명 또는 'custom'
   params:
-    checkpoint: ./model.pt
-    ref_audio: ./reference.wav    # 음성 복제 시
+    ref_audio: ./reference.wav    # 모델별 파라미터
+    ref_text: "참조 음성 텍스트"
 
 # 평가 설정
 evaluation:
-  language: ko
+  language: ko                    # ko 또는 en
   metrics:
     - utmos
     - wer
-    - cer
-    - speaker_similarity
-    - pesq                        # 참조 음성 있을 때만
-    - stoi
+    - speaker_similarity          # 참조 음성 필요
+    - pesq                        # 참조 음성 필요
+    - stoi                        # 참조 음성 필요
     - prosody
     - fad
-    - itn
+    - itn                         # ITN 데이터셋 필요
   whisper_model: large-v3         # STT 모델 크기
-  reference_audio: ./ref.wav      # 화자 유사도 기준 음성
+  device: cpu                     # cpu 또는 cuda
+  reference_audio: ./ref.wav      # 참조 음성 (speaker_similarity, pesq, stoi)
+  model_cache_dir: .cache         # 모델 캐시 디렉토리
 
 # 데이터셋
 dataset:
-  path: ./datasets/ko/
-  categories:
-    - general
-    - itn
-    - long_form
-  max_samples: 100                # 전체 중 샘플링 (선택)
+  path: ./datasets/ko/           # ko/ 또는 en/
+  categories: null                # null이면 전부, 리스트면 해당 카테고리만
+  max_samples: null               # null이면 전부
 
 # 리포트
 report:
@@ -298,63 +306,65 @@ report:
     - csv
     - markdown
   output_dir: ./results/
-  compare_with: ./results/previous_report.json  # 비교 대상 (선택)
+  compare_with: null              # 이전 result.json 경로 (비교 시)
   include_audio: true             # HTML에 오디오 임베드
 ```
 
-## 8. 프로젝트 구조
+## 8. 프로젝트 구조 (현재)
 
 ```
 tts-auto-eval/
 ├── src/tts_auto_eval/
-│   ├── __init__.py
-│   ├── cli.py                    # CLI 엔트리포인트 (click/typer)
-│   ├── config.py                 # 설정 파싱
-│   ├── pipeline.py               # 메인 파이프라인 오케스트레이션
-│   ├── audio.py                  # 오디오 유틸 (load_waveform, 리샘플링, 모노 변환)
+│   ├── __init__.py               # 패키지 초기화 (__version__)
+│   ├── cli.py                    # CLI 엔트리포인트 (typer: run, eval, compare)
+│   ├── config.py                 # 설정 파싱 (Pydantic 모델)
+│   ├── pipeline.py               # 메인 파이프라인 + _BUILTIN_MODELS 레지스트리
+│   ├── audio.py                  # load_waveform, save_waveform, get_duration
 │   ├── models/
 │   │   ├── __init__.py
 │   │   ├── base.py               # BaseTTSModel ABC
-│   │   ├── f5_tts.py
-│   │   ├── cosyvoice.py
-│   │   ├── coqui.py
-│   │   └── openai_tts.py
+│   │   ├── f5_tts.py             # F5-TTS 어댑터
+│   │   ├── cosyvoice.py          # CosyVoice 어댑터
+│   │   ├── coqui.py              # Coqui/XTTS 어댑터
+│   │   └── openai_tts.py         # OpenAI TTS API 어댑터
 │   ├── metrics/
 │   │   ├── __init__.py
-│   │   ├── base.py               # BaseMetric ABC
-│   │   ├── quality.py            # UTMOS, PESQ, DNSMOS
-│   │   ├── intelligibility.py    # WER, CER, STOI
-│   │   ├── speaker.py            # Speaker Similarity
-│   │   ├── prosody.py            # F0, Energy, Rate
-│   │   ├── distribution.py       # FAD
+│   │   ├── base.py               # BaseMetric ABC + MetricResult
+│   │   ├── quality.py            # UTMOS (torch.hub SpeechMOS)
+│   │   ├── intelligibility.py    # WER/CER (Whisper + jiwer) + 다국어 정규화
+│   │   ├── signal_quality.py     # PESQ, STOI (참조 음성 필요)
+│   │   ├── speaker.py            # Speaker Similarity (ECAPA-TDNN)
+│   │   ├── prosody.py            # F0, Energy, Speaking Rate (parselmouth)
+│   │   ├── distribution.py       # FAD (fadtk)
 │   │   └── itn.py                # ITN 카테고리별 WER
 │   ├── datasets/
 │   │   ├── __init__.py
-│   │   ├── loader.py             # 데이터셋 로더
-│   │   └── itn_generator.py      # ITN 테스트 케이스 자동 생성
+│   │   └── loader.py             # TestDataset/TestItem Pydantic 모델 + 로더
 │   └── reports/
 │       ├── __init__.py
-│       ├── html.py               # HTML 대시보드 생성
-│       ├── csv_report.py         # CSV 생성
-│       ├── markdown.py           # 마크다운 생성
-│       └── compare.py            # 비교 리포트
-├── templates/
-│   └── dashboard.html            # Jinja2 HTML 템플릿
+│       ├── html.py               # HTML 대시보드 (Jinja2 + Chart.js, 오디오 재생)
+│       ├── csv_report.py         # CSV (summary + per_sentence)
+│       ├── markdown.py           # 마크다운 (요약 + 비교 + Top/Bottom)
+│       └── compare.py            # 이전 결과 JSON 로더
 ├── datasets/
 │   ├── ko/
-│   │   ├── general.json
-│   │   ├── itn.json
-│   │   └── long_form.json
-│   └── schema.json
-├── tests/
-│   ├── test_metrics/
-│   ├── test_models/
-│   └── test_reports/
+│   │   ├── general.json          # 한국어 일반 20문장
+│   │   └── itn.json              # 한국어 ITN 20문항
+│   └── en/
+│       ├── general.json          # 영어 일반 20문장
+│       └── itn.json              # 영어 ITN 20문항
 ├── docs/
 │   └── spec.md                   # 이 문서
-├── pyproject.toml
+├── tests/                        # (향후 테스트 추가)
+├── .cache/                       # 모델 캐시 (gitignored)
+│   ├── torch_hub/                # UTMOS
+│   ├── whisper/                  # Whisper (WER, ITN 공유)
+│   └── speechbrain/              # ECAPA-TDNN
+├── .venv/                        # Python 3.12 가상환경 (uv)
+├── .gitignore
+├── pyproject.toml                # hatch 빌드, [project.scripts] 엔트리포인트
 ├── README.md
-└── config.example.yaml
+└── config.example.yaml           # 모델별 설정 예시 포함
 ```
 
 ## 9. 구현 단계
@@ -453,10 +463,12 @@ num2words              # ITN 기대값 생성
 
 [k2-fsa/ZipVoice](https://github.com/k2-fsa/ZipVoice) eval 모듈 분석 결과 반영:
 
-- **자체 모델 구현**: ZipVoice는 UTMOS, ECAPA-TDNN을 PyTorch로 직접 구현하여 외부 의존성 최소화. 본 프로젝트는 MVP에서 pip 패키지 사용, 안정화 후 필요시 벤더링 고려
-- **Seed-TTS WER 프로토콜**: Sentence-level WER (문장별 평균)과 Global WER 두 가지 모두 제공
-- **model-dir 패턴**: 평가용 모델 체크포인트를 단일 루트 디렉토리로 관리 (`--model-dir`)
-- **load_waveform 유틸**: 스테레오→모노, 리샘플링, max_seconds truncation 포함한 공통 오디오 로딩 유틸리티
-- **eval-only 모드**: ZipVoice처럼 이미 생성된 음성 파일만으로도 평가 가능 (`tts-auto-eval eval` 서브커맨드)
-- **cpSIM/cpWER**: 다화자 대화 TTS 평가 지표. Phase 3 이후 확장 시 참고
-- **torch.set_num_threads(1)**: 배치 평가 시 스레드 경합 방지를 위해 적용
+| ZipVoice 패턴 | 반영 상태 | 적용 위치 |
+|---------------|:---------:|----------|
+| Seed-TTS WER 프로토콜 (sentence + global) | DONE | `metrics/intelligibility.py` |
+| model-dir 패턴 (캐시 통합) | DONE | `.cache/` + `model_cache_dir` 설정 |
+| load_waveform 유틸 (모노/리샘플링/truncation) | DONE | `audio.py` |
+| eval-only 모드 | DONE | `cli.py eval` 서브커맨드 |
+| torch.set_num_threads(1) | DONE | `metrics/quality.py` |
+| 자체 모델 구현 (UTMOS, ECAPA-TDNN) | 미적용 | pip 패키지 사용 중, 필요시 벤더링 |
+| cpSIM/cpWER (다화자 대화) | 미적용 | Phase 5 예정 |
