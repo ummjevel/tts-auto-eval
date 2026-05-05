@@ -1,0 +1,146 @@
+{
+  "language": "ko",
+  "category": "itn",
+  "items": [
+    {
+      "id": "itn_ko_001",
+      "text": "참가자는 총 123명입니다.",
+      "expected_spoken": "참가자는 총 백이십삼 명입니다",
+      "tags": ["number"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "itn_ko_002",
+      "text": "이 건물은 2024년 3월 15일에 완공되었습니다.",
+      "expected_spoken": "이 건물은 이천이십사년 삼월 십오일에 완공되었습니다",
+      "tags": ["date"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_ko_003",
+      "text": "회의는 오후 3:30에 시작합니다.",
+      "expected_spoken": "회의는 오후 세시 삼십분에 시작합니다",
+      "tags": ["time"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_ko_004",
+      "text": "총 비용은 ₩1,500,000입니다.",
+      "expected_spoken": "총 비용은 백오십만 원입니다",
+      "tags": ["currency"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_ko_005",
+      "text": "연락처는 010-1234-5678입니다.",
+      "expected_spoken": "연락처는 공일공 일이삼사 오육칠팔입니다",
+      "tags": ["phone"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_ko_006",
+      "text": "성장률은 3.14%를 기록했습니다.",
+      "expected_spoken": "성장률은 삼 점 일사 퍼센트를 기록했습니다",
+      "tags": ["percentage"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_ko_007",
+      "text": "제한 속도는 100km/h입니다.",
+      "expected_spoken": "제한 속도는 시속 백 킬로미터입니다",
+      "tags": ["unit"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_ko_008",
+      "text": "WHO에서 새로운 지침을 발표했습니다.",
+      "expected_spoken": "더블유에이치오에서 새로운 지침을 발표했습니다",
+      "tags": ["abbreviation"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_ko_009",
+      "text": "가격이 $29.99에서 $19.99로 인하되었습니다.",
+      "expected_spoken": "가격이 이십구 점 구구 달러에서 십구 점 구구 달러로 인하되었습니다",
+      "tags": ["currency"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_ko_010",
+      "text": "이 제품의 무게는 2.5kg입니다.",
+      "expected_spoken": "이 제품의 무게는 이 점 오 킬로그램입니다",
+      "tags": ["unit"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "itn_ko_011",
+      "text": "서울시 인구는 약 9,700,000명입니다.",
+      "expected_spoken": "서울시 인구는 약 구백칠십만 명입니다",
+      "tags": ["number"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_ko_012",
+      "text": "오전 11:05 KTX 열차를 타세요.",
+      "expected_spoken": "오전 열한시 오분 케이티엑스 열차를 타세요",
+      "tags": ["time", "abbreviation"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_ko_013",
+      "text": "1등부터 3등까지 상품이 있습니다.",
+      "expected_spoken": "일등부터 삼등까지 상품이 있습니다",
+      "tags": ["ordinal"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "itn_ko_014",
+      "text": "이 방의 넓이는 33.5㎡입니다.",
+      "expected_spoken": "이 방의 넓이는 삼십삼 점 오 제곱미터입니다",
+      "tags": ["unit"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_ko_015",
+      "text": "계좌번호는 110-123-456789입니다.",
+      "expected_spoken": "계좌번호는 일일공 일이삼 사오육칠팔구입니다",
+      "tags": ["number"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_ko_016",
+      "text": "기온이 -5°C까지 내려갔습니다.",
+      "expected_spoken": "기온이 영하 오 도까지 내려갔습니다",
+      "tags": ["unit", "number"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_ko_017",
+      "text": "비율은 3:7로 나누었습니다.",
+      "expected_spoken": "비율은 삼 대 칠로 나누었습니다",
+      "tags": ["ratio"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "itn_ko_018",
+      "text": "2025년 1분기 매출은 ₩2,300,000,000입니다.",
+      "expected_spoken": "이천이십오년 일분기 매출은 이십삼억 원입니다",
+      "tags": ["date", "currency"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_ko_019",
+      "text": "제 이메일은 test@example.com입니다.",
+      "expected_spoken": "제 이메일은 테스트 골뱅이 이그잼플 닷 컴입니다",
+      "tags": ["email"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "itn_ko_020",
+      "text": "A4 용지 500매가 필요합니다.",
+      "expected_spoken": "에이포 용지 오백 매가 필요합니다",
+      "tags": ["abbreviation", "number"],
+      "difficulty": "medium"
+    }
+  ]
+}

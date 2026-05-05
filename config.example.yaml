@@ -11,16 +11,25 @@ model:
 evaluation:
   language: ko
   metrics:
-    - utmos
-    - wer
+    - utmos                         # MOS 예측 (1-5)
+    - wer                           # Word/Character Error Rate
+    # - pesq                        # PESQ (참조 음성 필요)
+    # - stoi                        # STOI (참조 음성 필요)
+    # - speaker_similarity          # 화자 유사도 (참조 음성 필요)
+    # - prosody                     # 운율 분석 (F0, 에너지, 발화 속도)
+    # - fad                         # Frechet Audio Distance
+    # - itn                         # ITN 카테고리별 WER
   whisper_model: large-v3           # Whisper 모델 크기 (tiny, base, small, medium, large-v3)
   device: cpu                       # cpu 또는 cuda
+  reference_audio: null             # 참조 음성 경로 (speaker_similarity, pesq, stoi에 필요)
+  model_cache_dir: .cache           # 모델 체크포인트 캐시 디렉토리
 
 # 데이터셋
 dataset:
   path: ./datasets/ko/
-  categories:                       # null이면 전부
-    - general
+  categories: null                  # null이면 전부, 리스트면 해당 카테고리만
+    # - general
+    # - itn
   max_samples: null                 # null이면 전부, 숫자면 카테고리당 최대 샘플 수
 
 # 리포트
@@ -28,6 +37,7 @@ report:
   formats:
     - html
     - csv
+    - markdown
   output_dir: ./results/
   compare_with: null                # 이전 result.json 경로 (비교 시)
   include_audio: true               # HTML에 오디오 임베드

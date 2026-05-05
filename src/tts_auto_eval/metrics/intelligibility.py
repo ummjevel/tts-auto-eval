@@ -35,10 +35,12 @@ class WERMetric(BaseMetric):
         whisper_model: str = "large-v3",
         language: str = "ko",
         device: str = "cpu",
+        cache_dir: str = ".cache",
     ):
         self._whisper_model_name = whisper_model
         self._language = language
         self._device = device
+        self._cache_dir = cache_dir
         self._model = None
 
     @property
@@ -50,9 +52,17 @@ class WERMetric(BaseMetric):
             return
 
         import whisper
+        from pathlib import Path
 
-        logger.info(f"Whisper {self._whisper_model_name} 모델 로딩 중...")
-        self._model = whisper.load_model(self._whisper_model_name, device=self._device)
+        download_root = Path(self._cache_dir) / "whisper"
+        download_root.mkdir(parents=True, exist_ok=True)
+
+        logger.info(f"Whisper {self._whisper_model_name} 모델 로딩 중... (cache: {download_root})")
+        self._model = whisper.load_model(
+            self._whisper_model_name,
+            device=self._device,
+            download_root=str(download_root),
+        )
         logger.info("Whisper 모델 로딩 완료")
 
     def _transcribe(self, audio: np.ndarray, sr: int) -> str:

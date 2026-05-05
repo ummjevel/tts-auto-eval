@@ -120,6 +120,16 @@ def _generate_reports(cfg, result, output: Path, audio_dir: Path | None = None):
         for p in csv_paths:
             typer.echo(f"  CSV: {p}")
 
+    if "markdown" in cfg.report.formats:
+        from tts_auto_eval.reports.markdown import generate_markdown_report
+
+        md_path = generate_markdown_report(
+            result,
+            output / "report.md",
+            compare_result=compare_result,
+        )
+        typer.echo(f"  Markdown: {md_path}")
+
 
 if __name__ == "__main__":
     app()

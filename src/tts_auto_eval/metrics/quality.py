@@ -15,8 +15,9 @@ class UTMOSMetric(BaseMetric):
     Wav2Vec2 기반 MOS 예측 모델. 1-5 스케일.
     """
 
-    def __init__(self, device: str = "cpu"):
+    def __init__(self, device: str = "cpu", cache_dir: str = ".cache"):
         self._device = device
+        self._cache_dir = cache_dir
         self._model = None
 
     @property
@@ -28,10 +29,15 @@ class UTMOSMetric(BaseMetric):
             return
 
         import torch
+        from pathlib import Path
 
         torch.set_num_threads(1)
 
-        logger.info("UTMOS 모델 로딩 중...")
+        hub_dir = Path(self._cache_dir) / "torch_hub"
+        hub_dir.mkdir(parents=True, exist_ok=True)
+        torch.hub.set_dir(str(hub_dir))
+
+        logger.info(f"UTMOS 모델 로딩 중... (cache: {hub_dir})")
         self._model = torch.hub.load(
             "tarepan/SpeechMOS:v1.2.0",
             "utmos22_strong",

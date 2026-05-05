@@ -78,7 +78,63 @@ DASHBOARD_TEMPLATE = """\
     <div class="sub">{{ summary.wer.count }} samples</div>
   </div>
 {% endif %}
+{% if 'speaker_similarity' in summary %}
+  <div class="card">
+    <div class="label">Speaker Similarity</div>
+    <div class="value">{{ "%.3f"|format(summary.speaker_similarity.mean) }}</div>
+    <div class="sub">&plusmn; {{ "%.3f"|format(summary.speaker_similarity.std) }}</div>
+  </div>
+{% endif %}
+{% if 'prosody' in summary %}
+  <div class="card">
+    <div class="label">Speaking Rate</div>
+    <div class="value">{{ "%.1f"|format(summary.prosody.speaking_rate_avg) }}</div>
+    <div class="sub">syl/s (avg F0: {{ "%.0f"|format(summary.prosody.f0_mean_avg) }} Hz)</div>
+  </div>
+{% endif %}
+{% if 'pesq' in summary %}
+  <div class="card">
+    <div class="label">PESQ</div>
+    <div class="value">{{ "%.2f"|format(summary.pesq.mean) }}</div>
+    <div class="sub">&plusmn; {{ "%.2f"|format(summary.pesq.std) }}</div>
+  </div>
+{% endif %}
+{% if 'stoi' in summary %}
+  <div class="card">
+    <div class="label">STOI</div>
+    <div class="value">{{ "%.3f"|format(summary.stoi.mean) }}</div>
+    <div class="sub">&plusmn; {{ "%.3f"|format(summary.stoi.std) }}</div>
+  </div>
+{% endif %}
+{% if 'itn' in summary %}
+  <div class="card">
+    <div class="label">ITN WER</div>
+    <div class="value">{{ "%.1f"|format(summary.itn.overall_wer * 100) }}%</div>
+    <div class="sub">CER: {{ "%.1f"|format(summary.itn.overall_cer * 100) }}%</div>
+  </div>
+{% endif %}
 </div>
+
+{% if 'itn' in summary and summary.itn.get('categories') %}
+<!-- ITN 카테고리별 결과 -->
+<div class="section">
+  <h2>ITN Category Breakdown</h2>
+  <table>
+    <thead>
+      <tr><th>Category</th><th>WER</th><th>Samples</th></tr>
+    </thead>
+    <tbody>
+    {% for cat, vals in summary.itn.categories.items()|sort %}
+      <tr>
+        <td>{{ cat }}</td>
+        <td>{{ "%.1f"|format(vals.wer * 100) }}%</td>
+        <td>{{ vals.count }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
 
 {% if compare %}
 <!-- 비교 표 -->

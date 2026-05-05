@@ -22,12 +22,13 @@ def _create_metrics(config: Config) -> list[BaseMetric]:
     """설정에 따라 평가 지표 인스턴스 생성."""
     metrics = []
     device = config.evaluation.device
+    cache_dir = config.evaluation.model_cache_dir
 
     for metric_name in config.evaluation.metrics:
         if metric_name == "utmos":
             from tts_auto_eval.metrics.quality import UTMOSMetric
 
-            metrics.append(UTMOSMetric(device=device))
+            metrics.append(UTMOSMetric(device=device, cache_dir=cache_dir))
         elif metric_name == "wer":
             from tts_auto_eval.metrics.intelligibility import WERMetric
 
@@ -36,6 +37,38 @@ def _create_metrics(config: Config) -> list[BaseMetric]:
                     whisper_model=config.evaluation.whisper_model,
                     language=config.evaluation.language,
                     device=device,
+                    cache_dir=cache_dir,
+                )
+            )
+        elif metric_name == "pesq":
+            from tts_auto_eval.metrics.signal_quality import PESQMetric
+
+            metrics.append(PESQMetric())
+        elif metric_name == "stoi":
+            from tts_auto_eval.metrics.signal_quality import STOIMetric
+
+            metrics.append(STOIMetric())
+        elif metric_name == "speaker_similarity":
+            from tts_auto_eval.metrics.speaker import SpeakerSimilarityMetric
+
+            metrics.append(SpeakerSimilarityMetric(device=device, cache_dir=cache_dir))
+        elif metric_name == "prosody":
+            from tts_auto_eval.metrics.prosody import ProsodyMetric
+
+            metrics.append(ProsodyMetric())
+        elif metric_name == "fad":
+            from tts_auto_eval.metrics.distribution import FADMetric
+
+            metrics.append(FADMetric())
+        elif metric_name == "itn":
+            from tts_auto_eval.metrics.itn import ITNMetric
+
+            metrics.append(
+                ITNMetric(
+                    whisper_model=config.evaluation.whisper_model,
+                    language=config.evaluation.language,
+                    device=device,
+                    cache_dir=cache_dir,
                 )
             )
         else:
@@ -93,6 +126,17 @@ def run_evaluation(
 
     logger.info(f"평가 지표: {[m.name for m in metrics]}")
 
+    # 참조 음성 로드 (화자 유사도, PESQ, STOI 등에 필요)
+    reference_audio = None
+    reference_sr = None
+    if config.evaluation.reference_audio:
+        ref_path = Path(config.evaluation.reference_audio)
+        if ref_path.exists():
+            reference_audio, reference_sr = load_waveform(ref_path)
+            logger.info(f"참조 음성 로드: {ref_path}")
+        else:
+            logger.warning(f"참조 음성 파일 없음: {ref_path}")
+
     # 전체 결과 저장
     all_results: dict[str, list[MetricResult]] = {m.name: [] for m in metrics}
     sample_details = []
@@ -127,11 +171,25 @@ def run_evaluation(
             }
 
             for metric in metrics:
-                result = metric.evaluate_sample(
-                    audio=audio,
-                    sr=sr,
-                    text=item.text,
-                )
+                # ITN 지표는 expected_spoken과 tags를 추가로 전달
+                if metric.name == "itn":
+                    from tts_auto_eval.metrics.itn import ITNMetric
+
+                    result = metric.evaluate_sample(
+                        audio=audio,
+                        sr=sr,
+                        text=item.text,
+                        expected_spoken=item.expected_spoken,
+                        tags=item.tags,
+                    )
+                else:
+                    result = metric.evaluate_sample(
+                        audio=audio,
+                        sr=sr,
+                        text=item.text,
+                        reference_audio=reference_audio,
+                        reference_sr=reference_sr,
+                    )
                 result.sample_id = item.id
                 all_results[metric.name].append(result)
                 sample_result[metric.name] = result.score

@@ -22,6 +22,7 @@ class EvaluationConfig(BaseModel):
     whisper_model: str = "large-v3"
     device: str = "cpu"
     reference_audio: str | None = None
+    model_cache_dir: str = ".cache"
 
 
 class DatasetConfig(BaseModel):
