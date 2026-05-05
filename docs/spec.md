@@ -359,25 +359,45 @@ tts-auto-eval/
 
 ## 9. 구현 단계
 
-### Phase 1: MVP (핵심 파이프라인)
-- [ ] 프로젝트 스캐폴딩 (pyproject.toml, CLI)
-- [ ] BaseTTSModel + 1개 백엔드 (F5-TTS 또는 사용자 커스텀)
-- [ ] 핵심 지표: UTMOS, WER/CER
-- [ ] 한국어 일반 테스트 세트
-- [ ] HTML 대시보드 (기본)
-- [ ] CSV 출력
+### Phase 1: MVP (핵심 파이프라인) -- DONE
+- [x] 프로젝트 스캐폴딩 (pyproject.toml, CLI, uv 가상환경)
+- [x] BaseTTSModel 어댑터 패턴 + 사용자 커스텀 모델 지원
+- [x] 핵심 지표: UTMOS, WER/CER (Seed-TTS 프로토콜)
+- [x] 한국어 일반 테스트 세트 (20문장)
+- [x] HTML 대시보드 (Chart.js, 오디오 재생, 비교 표)
+- [x] CSV 출력 (summary + per_sentence)
+- [x] eval-only 모드 (기존 음성 파일 평가)
+- [x] 비교 리포트 (compare 서브커맨드)
 
-### Phase 2: 전체 지표 + ITN
-- [ ] 나머지 지표: PESQ, STOI, Speaker Sim, Prosody, FAD
-- [ ] ITN 테스트 세트 (한국어)
-- [ ] ITN 카테고리별 리포트
-- [ ] 마크다운 리포트
-- [ ] 비교 리포트 기능
+### Phase 2: 전체 지표 + ITN -- DONE
+- [x] PESQ (지각적 음질, 참조 음성 필요)
+- [x] STOI (단시간 명료도, 참조 음성 필요)
+- [x] Speaker Similarity (ECAPA-TDNN 코사인 유사도)
+- [x] Prosody (F0 RMSE, 에너지 상관도, 발화 속도)
+- [x] FAD (Frechet Audio Distance, 분포 수준)
+- [x] ITN 테스트 세트 한국어 20문항 (숫자/날짜/시간/통화/전화번호/퍼센트/단위/약어/이메일/비율/서수)
+- [x] ITN 카테고리별 WER 리포트 (HTML 테이블 + 마크다운)
+- [x] 마크다운 리포트 (요약 + 비교 표 + Top/Bottom 샘플)
+- [x] 모델 캐시 디렉토리 통합 (.cache/ 하위, 설정으로 변경 가능)
+- [x] 참조 음성 로드 및 전달 (speaker_similarity, pesq, stoi)
 
 ### Phase 3: 다국어 + 추가 백엔드
 - [ ] 영어 데이터셋 및 ITN
-- [ ] 추가 TTS 백엔드 (CosyVoice, Coqui 등)
+- [ ] 추가 TTS 백엔드 (CosyVoice, Coqui, F5-TTS 어댑터)
 - [ ] 리포트 비교 대시보드 고도화
+
+### Phase 4: 고도화
+- [ ] **실시간 A/B 테스트**: 두 모델을 동시에 돌려서 동일 텍스트로 비교 평가
+- [ ] **CI/CD 통합**: GitHub Actions로 모델 체크포인트 변경 시 자동 평가 + 리포트 PR 코멘트
+- [ ] **Whisper 외 ASR 백엔드**: Paraformer (중국어), Conformer, faster-whisper (속도 최적화)
+- [ ] **MOS 주관 평가 연동**: 자동 평가와 사람 평가를 매핑하여 상관도 분석
+- [ ] **긴 문장/문단 평가**: long-form 데이터셋 + 문단 단위 운율 일관성 지표
+- [ ] **스트리밍 TTS 평가**: 첫 음절 지연시간(TTFB), 청크 간 이음새 품질
+- [ ] **감정/스타일 평가**: 감정 분류기로 의도한 감정 전달 정확도 측정
+- [ ] **다화자 대화 TTS**: cpSIM/cpWER (ZipVoice 참고) + 화자 전환 자연스러움
+- [ ] **웹 UI 대시보드**: Streamlit/Gradio 기반 인터랙티브 평가 + 오디오 비교 재생
+- [ ] **벤치마크 리더보드**: 여러 모델 결과를 누적하여 자동 랭킹 테이블 생성
+- [ ] **평가 데이터셋 자동 생성**: LLM으로 도메인별 테스트 문장 생성 (의료, 법률, 방송 등)
 
 ## 10. 기술 스택
 
