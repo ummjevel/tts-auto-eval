@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tts-auto-eval"
+version = "0.1.0"
+description = "TTS 모델 자동 평가 및 리포트 생성 도구"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = [
+    "typer>=0.9",
+    "pydantic>=2.0",
+    "pyyaml",
+    "jinja2",
+    "soundfile",
+    "librosa",
+    "numpy",
+    "tqdm",
+    "jiwer",
+    "openai-whisper",
+]
+
+[project.optional-dependencies]
+full = [
+    "pesq",
+    "pystoi",
+    "speechbrain",
+    "parselmouth",
+    "fadtk",
+    "num2words",
+]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[project.scripts]
+tts-auto-eval = "tts_auto_eval.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tts_auto_eval"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100

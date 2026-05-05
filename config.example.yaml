@@ -1,0 +1,33 @@
+# TTS Auto Eval 설정 예시
+
+# 모델 설정
+model:
+  type: custom
+  module: my_tts_model.MyTTS      # BaseTTSModel 구현 클래스
+  params:
+    checkpoint: ./checkpoints/model.pt
+
+# 평가 설정
+evaluation:
+  language: ko
+  metrics:
+    - utmos
+    - wer
+  whisper_model: large-v3           # Whisper 모델 크기 (tiny, base, small, medium, large-v3)
+  device: cpu                       # cpu 또는 cuda
+
+# 데이터셋
+dataset:
+  path: ./datasets/ko/
+  categories:                       # null이면 전부
+    - general
+  max_samples: null                 # null이면 전부, 숫자면 카테고리당 최대 샘플 수
+
+# 리포트
+report:
+  formats:
+    - html
+    - csv
+  output_dir: ./results/
+  compare_with: null                # 이전 result.json 경로 (비교 시)
+  include_audio: true               # HTML에 오디오 임베드
