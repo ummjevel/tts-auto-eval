@@ -210,18 +210,15 @@ def calibrate_mos(
 
     output.mkdir(parents=True, exist_ok=True)
 
-    # Load results
     with open(results, encoding="utf-8") as f:
         result_data = json.load(f)
 
-    # Load human scores
     mos_path = str(scores)
 
     from tts_auto_eval.metrics.mos_calibration import MOSCalibrationMetric
 
     metric = MOSCalibrationMetric(human_scores_path=mos_path)
 
-    # If result already has utmos scores, compute correlation directly
     samples = result_data.get("samples", [])
     from tts_auto_eval.metrics.base import MetricResult
 
@@ -248,7 +245,6 @@ def calibrate_mos(
     if mock_results:
         agg = metric.aggregate(mock_results)
 
-        # Save
         out_path = output / "calibration.json"
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(agg, f, indent=2, ensure_ascii=False)
@@ -262,6 +258,43 @@ def calibrate_mos(
     else:
         typer.echo("UTMOS 점수가 포함된 결과가 없습니다.", err=True)
         raise typer.Exit(1)
+
+
+@app.command()
+def dashboard(
+    results_dir: Path = typer.Option("./results", "--results-dir", "-d", help="결과 디렉토리"),
+    port: int = typer.Option(7860, "--port", "-p", help="포트 번호"),
+    share: bool = typer.Option(False, "--share", help="공유 링크 생성"),
+):
+    """웹 UI 대시보드 실행."""
+    from tts_auto_eval.web.app import launch_dashboard
+
+    typer.echo(f"대시보드 시작: http://localhost:{port}")
+    launch_dashboard(results_dir=str(results_dir), port=port, share=share)
+
+
+@app.command()
+def generate_dataset(
+    domain: str = typer.Option(
+        "general",
+        "--domain",
+        help="도메인 (general/medical/legal/broadcast/customer_service/finance)",
+    ),
+    language: str = typer.Option("ko", "--language", "-l", help="언어 (ko/en)"),
+    count: int = typer.Option(20, "--count", "-n", help="생성할 문장 수"),
+    output: Path = typer.Option(
+        "./datasets/generated.json", "--output", "-o", help="출력 파일 경로"
+    ),
+    include_itn: bool = typer.Option(False, "--include-itn", help="ITN 테스트 케이스 포함"),
+):
+    """LLM으로 평가 데이터셋 자동 생성."""
+    from tts_auto_eval.datasets.generator import DatasetGenerator
+
+    gen = DatasetGenerator()
+    dataset = gen.generate(domain=domain, language=language, count=count, include_itn=include_itn)
+    path = gen.save(dataset, output)
+
+    typer.echo(f"데이터셋 생성 완료: {path} ({len(dataset['items'])}개 항목)")
 
 
 if __name__ == "__main__":
