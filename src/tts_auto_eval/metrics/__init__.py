@@ -14,3 +14,5 @@ register_metric("itn", "tts_auto_eval.metrics.itn", "ITNMetric")
 
 # Phase 5 메트릭
 register_metric("phoneme", "tts_auto_eval.metrics.phoneme", "PhonemeMetric")
+register_metric("streaming", "tts_auto_eval.metrics.streaming", "StreamingMetric")
+register_metric("longform", "tts_auto_eval.metrics.longform", "LongformMetric")

@@ -33,3 +33,13 @@ class BaseTTSModel(ABC):
         """음성을 파일로 저장."""
         audio, sr = self.synthesize(text)
         return save_waveform(audio, sr, path)
+
+    def synthesize_stream(self, text: str):
+        """스트리밍 음성 합성 (청크 단위).
+
+        Yields:
+            (audio_chunk, sample_rate) 튜플
+
+        기본 구현: 지원하지 않음.
+        """
+        raise NotImplementedError(f"{self.name}은 스트리밍을 지원하지 않습니다")
