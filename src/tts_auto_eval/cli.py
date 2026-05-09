@@ -131,5 +131,38 @@ def _generate_reports(cfg, result, output: Path, audio_dir: Path | None = None):
         typer.echo(f"  Markdown: {md_path}")
 
 
+@app.command()
+def leaderboard(
+    results: list[Path] = typer.Argument(None, help="result.json 파일 경로들"),
+    output: Path = typer.Option("./leaderboard", "--output", "-o", help="출력 디렉토리"),
+    results_dir: Path | None = typer.Option(None, "--results-dir", "-d", help="result.json을 스캔할 디렉토리"),
+):
+    """여러 모델 평가 결과를 종합하여 랭킹 리더보드 생성."""
+    from tts_auto_eval.leaderboard import (
+        build_leaderboard,
+        generate_leaderboard_markdown,
+        load_results,
+    )
+
+    # Collect result paths
+    all_paths = list(results) if results else []
+    if results_dir and results_dir.is_dir():
+        all_paths.extend(sorted(results_dir.glob("**/result.json")))
+
+    if not all_paths:
+        typer.echo("result.json 파일을 지정하세요.", err=True)
+        raise typer.Exit(1)
+
+    typer.echo(f"리더보드 생성: {len(all_paths)}개 결과 파일")
+
+    loaded = load_results(all_paths)
+    lb = build_leaderboard(loaded)
+
+    output.mkdir(parents=True, exist_ok=True)
+    md_path = generate_leaderboard_markdown(lb, output / "leaderboard.md")
+
+    typer.echo(f"리더보드 생성 완료: {md_path}")
+
+
 if __name__ == "__main__":
     app()
