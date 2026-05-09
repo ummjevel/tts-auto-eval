@@ -44,6 +44,15 @@ dev = [
     "pytest",
     "ruff",
 ]
+paraformer = [
+    "funasr",
+]
+nemo = [
+    "nemo-toolkit[asr]",
+]
+distributed = [
+    "ray>=2.0",
+]
 phoneme = [
     "g2pk",
     "g2p-en",
