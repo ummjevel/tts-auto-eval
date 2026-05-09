@@ -24,6 +24,8 @@ logging.basicConfig(
 def run(
     config: Path = typer.Option(..., "--config", "-c", help="설정 파일 경로 (YAML)"),
     output: Path = typer.Option("./results", "--output", "-o", help="결과 출력 디렉토리"),
+    distributed: bool = typer.Option(False, "--distributed", help="분산 평가 모드 (Ray)"),
+    workers: int = typer.Option(4, "--workers", "-w", help="분산 워커 수"),
 ):
     """TTS 모델 평가 실행 (텍스트 → 음성 생성 → 평가)."""
     from tts_auto_eval.config import load_config
@@ -36,7 +38,13 @@ def run(
 
     typer.echo(f"평가 시작: {cfg.evaluation.metrics}")
 
-    result = run_evaluation(cfg)
+    if distributed:
+        from tts_auto_eval.distributed import run_distributed_evaluation
+
+        typer.echo(f"분산 평가 시작: {workers}개 워커")
+        result = run_distributed_evaluation(cfg, num_workers=workers)
+    else:
+        result = run_evaluation(cfg)
 
     # 리포트 생성
     _generate_reports(cfg, result, output)

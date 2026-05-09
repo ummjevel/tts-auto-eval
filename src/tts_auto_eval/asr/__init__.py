@@ -28,6 +28,14 @@ def create_asr(
         from tts_auto_eval.asr.faster_whisper_backend import FasterWhisperASR
 
         return FasterWhisperASR(model_name=model_name, device=device, cache_dir=cache_dir)
+    elif backend == "paraformer":
+        from tts_auto_eval.asr.paraformer_backend import ParaformerASR
+
+        return ParaformerASR(model_name=model_name, device=device, cache_dir=cache_dir)
+    elif backend == "nemo":
+        from tts_auto_eval.asr.nemo_backend import NeMoASR
+
+        return NeMoASR(model_name=model_name, device=device, cache_dir=cache_dir)
     else:
         from tts_auto_eval.asr.whisper_backend import OpenAIWhisperASR
 
