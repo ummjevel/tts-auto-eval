@@ -20,63 +20,48 @@ logger = logging.getLogger(__name__)
 
 def _create_metrics(config: Config) -> list[BaseMetric]:
     """설정에 따라 평가 지표 인스턴스 생성."""
+    from tts_auto_eval.metrics.registry import create_metric, discover_plugins
+
+    # 플러그인 탐색
+    discover_plugins()
+
+    # 메트릭별 공통 kwargs 매핑
     metrics = []
-    device = config.evaluation.device
-    cache_dir = config.evaluation.model_cache_dir
 
     for metric_name in config.evaluation.metrics:
-        if metric_name == "utmos":
-            from tts_auto_eval.metrics.quality import UTMOSMetric
-
-            metrics.append(UTMOSMetric(device=device, cache_dir=cache_dir))
-        elif metric_name == "wer":
-            from tts_auto_eval.metrics.intelligibility import WERMetric
-
-            metrics.append(
-                WERMetric(
-                    whisper_model=config.evaluation.whisper_model,
-                    language=config.evaluation.language,
-                    device=device,
-                    cache_dir=cache_dir,
-                    whisper_backend=config.evaluation.whisper_backend,
-                )
-            )
-        elif metric_name == "pesq":
-            from tts_auto_eval.metrics.signal_quality import PESQMetric
-
-            metrics.append(PESQMetric())
-        elif metric_name == "stoi":
-            from tts_auto_eval.metrics.signal_quality import STOIMetric
-
-            metrics.append(STOIMetric())
-        elif metric_name == "speaker_similarity":
-            from tts_auto_eval.metrics.speaker import SpeakerSimilarityMetric
-
-            metrics.append(SpeakerSimilarityMetric(device=device, cache_dir=cache_dir))
-        elif metric_name == "prosody":
-            from tts_auto_eval.metrics.prosody import ProsodyMetric
-
-            metrics.append(ProsodyMetric())
-        elif metric_name == "fad":
-            from tts_auto_eval.metrics.distribution import FADMetric
-
-            metrics.append(FADMetric())
-        elif metric_name == "itn":
-            from tts_auto_eval.metrics.itn import ITNMetric
-
-            metrics.append(
-                ITNMetric(
-                    whisper_model=config.evaluation.whisper_model,
-                    language=config.evaluation.language,
-                    device=device,
-                    cache_dir=cache_dir,
-                    whisper_backend=config.evaluation.whisper_backend,
-                )
-            )
-        else:
+        try:
+            kwargs = _build_metric_kwargs(config, metric_name)
+            metrics.append(create_metric(metric_name, **kwargs))
+        except KeyError:
             logger.warning(f"알 수 없는 지표: {metric_name} (건너뜀)")
+        except Exception as e:
+            logger.warning(f"지표 생성 실패: {metric_name} — {e}")
 
     return metrics
+
+
+def _build_metric_kwargs(config: Config, metric_name: str) -> dict:
+    """메트릭별 생성자 kwargs를 config에서 추출."""
+    device = config.evaluation.device
+    cache_dir = config.evaluation.model_cache_dir
+    language = config.evaluation.language
+    whisper_backend = config.evaluation.whisper_backend
+
+    # Metrics that need whisper/ASR
+    if metric_name in ("wer", "itn", "phoneme"):
+        return {
+            "whisper_model": config.evaluation.whisper_model,
+            "language": language,
+            "device": device,
+            "cache_dir": cache_dir,
+            "whisper_backend": whisper_backend,
+        }
+    # Metrics that need device + cache
+    elif metric_name in ("utmos", "speaker_similarity"):
+        return {"device": device, "cache_dir": cache_dir}
+    # Metrics with no special args
+    else:
+        return {}
 
 
 _BUILTIN_MODELS = {

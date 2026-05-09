@@ -38,12 +38,18 @@ dev = [
     "pytest",
     "ruff",
 ]
+phoneme = [
+    "g2pk",
+    "g2p-en",
+]
 
 [project.scripts]
 tts-auto-eval = "tts_auto_eval.cli:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/tts_auto_eval"]
+
+[project.entry-points."tts_auto_eval.metrics"]
 
 [tool.ruff]
 target-version = "py310"
