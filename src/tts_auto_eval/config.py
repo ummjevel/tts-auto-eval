@@ -20,6 +20,7 @@ class EvaluationConfig(BaseModel):
     language: str = "ko"
     metrics: list[str] = Field(default_factory=lambda: ["utmos", "wer"])
     whisper_model: str = "large-v3"
+    whisper_backend: str = "openai-whisper"  # "openai-whisper" or "faster-whisper"
     device: str = "cpu"
     reference_audio: str | None = None
     model_cache_dir: str = ".cache"

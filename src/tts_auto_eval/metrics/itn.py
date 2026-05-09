@@ -26,44 +26,27 @@ class ITNMetric(BaseMetric):
         language: str = "ko",
         device: str = "cpu",
         cache_dir: str = ".cache",
+        whisper_backend: str = "openai-whisper",
     ):
-        self._whisper_model_name = whisper_model
         self._language = language
-        self._device = device
-        self._cache_dir = cache_dir
-        self._model = None
+        self._asr = None
+        self._asr_config = {
+            "backend": whisper_backend,
+            "model_name": whisper_model,
+            "device": device,
+            "cache_dir": cache_dir,
+        }
 
     @property
     def name(self) -> str:
         return "itn"
 
-    def _load_model(self):
-        if self._model is not None:
-            return
-
-        import whisper
-        from pathlib import Path
-
-        download_root = Path(self._cache_dir) / "whisper"
-        download_root.mkdir(parents=True, exist_ok=True)
-
-        logger.info(f"Whisper {self._whisper_model_name} 모델 로딩 중 (ITN)... (cache: {download_root})")
-        self._model = whisper.load_model(
-            self._whisper_model_name,
-            device=self._device,
-            download_root=str(download_root),
-        )
-
     def _transcribe(self, audio: np.ndarray, sr: int) -> str:
-        import librosa
+        if self._asr is None:
+            from tts_auto_eval.asr import create_asr
 
-        self._load_model()
-
-        if sr != 16000:
-            audio = librosa.resample(audio, orig_sr=sr, target_sr=16000)
-
-        result = self._model.transcribe(audio, language=self._language, task="transcribe")
-        return result["text"]
+            self._asr = create_asr(**self._asr_config)
+        return self._asr.transcribe(audio, sr, self._language)
 
     def _normalize(self, text: str) -> str:
         """비교를 위한 텍스트 정규화."""

@@ -38,6 +38,7 @@ def _create_metrics(config: Config) -> list[BaseMetric]:
                     language=config.evaluation.language,
                     device=device,
                     cache_dir=cache_dir,
+                    whisper_backend=config.evaluation.whisper_backend,
                 )
             )
         elif metric_name == "pesq":
@@ -69,6 +70,7 @@ def _create_metrics(config: Config) -> list[BaseMetric]:
                     language=config.evaluation.language,
                     device=device,
                     cache_dir=cache_dir,
+                    whisper_backend=config.evaluation.whisper_backend,
                 )
             )
         else:
