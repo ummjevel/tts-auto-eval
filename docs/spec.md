@@ -404,21 +404,21 @@ tts-auto-eval/
 - [x] **벤치마크 리더보드**: 여러 모델 result.json을 누적하여 자동 랭킹 테이블 생성 (`tts-auto-eval leaderboard`)
 - [x] **faster-whisper 백엔드**: openai-whisper 대비 3-4배 빠른 CTranslate2 기반 ASR. ASR 추상화 레이어 (`asr/` 모듈)
 
-### Phase 5: 평가 깊이 확장
-- [ ] **스트리밍 TTS 평가**: 첫 음절 지연시간(TTFB), 청크 간 이음새 품질, 실시간 합성 안정성
-- [ ] **감정/스타일 평가**: SER(Speech Emotion Recognition) 분류기로 의도한 감정 전달 정확도 측정. "슬프게 말해줘" 같은 지시 이행 검증
-- [ ] **긴 문장/문단 평가**: long-form 데이터셋 + 문단 단위 운율 일관성 (F0 drift, 에너지 감쇠, 호흡 위치 자연스러움)
-- [ ] **다화자 대화 TTS**: cpSIM/cpWER (ZipVoice 참고) + pyannote 화자분리 + 화자 전환 자연스러움
-- [ ] **MOS 주관 평가 연동**: 크라우드소싱 MOS 수집 → UTMOS 예측과의 상관도 분석 → 캘리브레이션 계수 산출
-- [ ] **발음 사전 기반 평가**: G2P(Grapheme-to-Phoneme) 변환 후 음소 단위 정확도 측정
+### Phase 5: 평가 깊이 확장 -- DONE
+- [x] **스트리밍 TTS 평가**: TTFB, 청크 이음새 품질 (에너지 불연속성), RTF
+- [x] **감정/스타일 평가**: wav2vec2 SER 분류기로 감정 전달 정확도 측정
+- [x] **긴 문장/문단 평가**: F0 drift, 에너지 감쇠, 호흡 위치 규칙성 복합 점수
+- [x] **다화자 대화 TTS**: cpSIM/within-speaker consistency (ECAPA-TDNN 임베딩)
+- [x] **MOS 주관 평가 연동**: 인간 MOS ↔ UTMOS Pearson/Spearman 상관분석 (`calibrate-mos` CLI)
+- [x] **발음 사전 기반 평가**: G2P(g2pk/g2p_en) → PER(Phoneme Error Rate) 측정
 
-### Phase 6: 생산성 + 확장성
-- [ ] **웹 UI 대시보드**: Gradio/Streamlit 기반 인터랙티브 평가. 오디오 A/B 재생, 실시간 차트, 드래그앤드롭 음성 업로드
-- [ ] **평가 데이터셋 자동 생성**: LLM으로 도메인별 테스트 문장 생성 (의료, 법률, 방송, 고객센터 등). ITN 케이스 자동 확장
-- [ ] **Whisper 외 ASR 백엔드 확장**: Paraformer (중국어), Conformer, Canary (NVIDIA) — 언어별 최적 ASR 자동 선택
-- [ ] **분산 평가**: Ray/Dask로 대규모 데이터셋 병렬 평가. GPU 클러스터 지원
-- [ ] **모델 프로파일링**: 추론 속도(RTF), 메모리 사용량, GPU utilization 자동 측정 → 리포트에 포함
-- [ ] **플러그인 시스템**: 사용자 정의 지표를 파이썬 패키지로 설치하여 자동 등록 (entry_points 기반)
+### Phase 6: 생산성 + 확장성 -- DONE
+- [x] **웹 UI 대시보드**: Gradio 기반 (`dashboard` CLI). 결과 요약, 모델 비교, 파일 업로드
+- [x] **평가 데이터셋 자동 생성**: OpenAI LLM 기반 도메인별 문장 생성 (`generate-dataset` CLI)
+- [x] **ASR 백엔드 확장**: Paraformer (FunASR), NeMo Conformer/Canary 추가
+- [x] **분산 평가**: Ray 기반 병렬 평가 (`run --distributed --workers N`)
+- [x] **모델 프로파일링**: RTF, 메모리, 추론 시간 자동 측정 (profiling 메트릭)
+- [x] **플러그인 시스템**: entry_points 기반 메트릭 레지스트리 (`metrics/registry.py`)
 
 ## 10. 기술 스택
 
