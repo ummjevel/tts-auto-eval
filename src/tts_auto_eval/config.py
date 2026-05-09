@@ -57,3 +57,21 @@ def load_config(path: str | Path) -> Config:
     with open(path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return Config(**(data or {}))
+
+
+class ABTestConfig(BaseModel):
+    """A/B 테스트 설정."""
+
+    model_a: ModelConfig
+    model_b: ModelConfig
+    evaluation: EvaluationConfig = Field(default_factory=EvaluationConfig)
+    dataset: DatasetConfig = Field(default_factory=DatasetConfig)
+    report: ReportConfig = Field(default_factory=ReportConfig)
+
+
+def load_ab_config(path: str | Path) -> "ABTestConfig":
+    """A/B 테스트 설정 로드."""
+    path = Path(path)
+    with open(path, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return ABTestConfig(**(data or {}))
