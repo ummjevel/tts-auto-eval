@@ -398,11 +398,11 @@ tts-auto-eval/
 - [x] 빌트인 모델 자동 로딩 (_BUILTIN_MODELS 레지스트리)
 - [x] config.example.yaml에 모델별 설정 예시 추가
 
-### Phase 4: 실전 운영
-- [ ] **실시간 A/B 테스트**: `tts-auto-eval ab --model-a X --model-b Y` — 동일 텍스트로 두 모델 동시 평가, 지표별 승률 표
-- [ ] **CI/CD 통합**: GitHub Actions workflow 제공. 모델 체크포인트 변경 시 자동 eval → PR에 리포트 코멘트로 게시
-- [ ] **벤치마크 리더보드**: 여러 모델 result.json을 누적하여 자동 랭킹 테이블 생성 (`tts-auto-eval leaderboard`)
-- [ ] **faster-whisper 백엔드**: openai-whisper 대비 3-4배 빠른 CTranslate2 기반 ASR. 대규모 평가 시 병목 해소
+### Phase 4: 실전 운영 -- DONE
+- [x] **실시간 A/B 테스트**: `tts-auto-eval ab --config ab.yaml` — 동일 텍스트로 두 모델 동시 평가, 지표별 승률 표
+- [x] **CI/CD 통합**: GitHub Actions workflow 제공. 모델 체크포인트 변경 시 자동 eval → PR에 리포트 코멘트로 게시
+- [x] **벤치마크 리더보드**: 여러 모델 result.json을 누적하여 자동 랭킹 테이블 생성 (`tts-auto-eval leaderboard`)
+- [x] **faster-whisper 백엔드**: openai-whisper 대비 3-4배 빠른 CTranslate2 기반 ASR. ASR 추상화 레이어 (`asr/` 모듈)
 
 ### Phase 5: 평가 깊이 확장
 - [ ] **스트리밍 TTS 평가**: 첫 음절 지연시간(TTFB), 청크 간 이음새 품질, 실시간 합성 안정성
