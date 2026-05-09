@@ -18,3 +18,5 @@ register_metric("streaming", "tts_auto_eval.metrics.streaming", "StreamingMetric
 register_metric("longform", "tts_auto_eval.metrics.longform", "LongformMetric")
 register_metric("emotion", "tts_auto_eval.metrics.emotion", "EmotionMetric")
 register_metric("multispeaker", "tts_auto_eval.metrics.multispeaker", "MultiSpeakerMetric")
+register_metric("mos_calibration", "tts_auto_eval.metrics.mos_calibration", "MOSCalibrationMetric")
+register_metric("profiling", "tts_auto_eval.metrics.profiling", "ProfilingMetric")

@@ -48,6 +48,12 @@ emotion = [
 multispeaker = [
     "pyannote-audio",
 ]
+calibration = [
+    "scipy",
+]
+profiling = [
+    "psutil",
+]
 
 [project.scripts]
 tts-auto-eval = "tts_auto_eval.cli:app"

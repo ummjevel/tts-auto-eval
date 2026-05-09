@@ -73,12 +73,13 @@ def test_discover_plugins():
 
 
 def test_builtin_metrics_registered():
-    """metrics 모듈 임포트 후 9개 빌트인 메트릭이 등록."""
+    """metrics 모듈 임포트 후 11개 빌트인 메트릭이 등록."""
     import tts_auto_eval.metrics  # noqa: F401
 
     expected = [
         "utmos", "wer", "pesq", "stoi",
         "speaker_similarity", "prosody", "fad", "itn", "phoneme",
+        "mos_calibration", "profiling",
     ]
     registered = list_metrics()
     for name in expected:

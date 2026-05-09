@@ -199,5 +199,70 @@ def ab(
     typer.echo(f"\nA/B 테스트 완료! 리포트: {md_path}")
 
 
+@app.command()
+def calibrate_mos(
+    scores: Path = typer.Option(..., "--scores", "-s", help="인간 MOS 점수 파일 (JSON/CSV)"),
+    results: Path = typer.Option(..., "--results", "-r", help="평가 결과 파일 (result.json)"),
+    output: Path = typer.Option("./calibration", "--output", "-o", help="출력 디렉토리"),
+):
+    """UTMOS 예측과 인간 MOS 점수 간 상관도 분석."""
+    import json
+
+    output.mkdir(parents=True, exist_ok=True)
+
+    # Load results
+    with open(results, encoding="utf-8") as f:
+        result_data = json.load(f)
+
+    # Load human scores
+    mos_path = str(scores)
+
+    from tts_auto_eval.metrics.mos_calibration import MOSCalibrationMetric
+
+    metric = MOSCalibrationMetric(human_scores_path=mos_path)
+
+    # If result already has utmos scores, compute correlation directly
+    samples = result_data.get("samples", [])
+    from tts_auto_eval.metrics.base import MetricResult
+
+    mock_results = []
+    human_scores = metric._human_scores
+    for sample in samples:
+        utmos = sample.get("utmos")
+        if utmos is not None:
+            sid = sample["id"]
+            human = human_scores.get(sid)
+            mock_results.append(
+                MetricResult(
+                    sample_id=sid,
+                    metric_name="mos_calibration",
+                    score=utmos,
+                    details={
+                        "predicted_mos": utmos,
+                        "human_mos": human,
+                        "has_human_score": human is not None,
+                    },
+                )
+            )
+
+    if mock_results:
+        agg = metric.aggregate(mock_results)
+
+        # Save
+        out_path = output / "calibration.json"
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(agg, f, indent=2, ensure_ascii=False)
+
+        typer.echo("MOS 캘리브레이션 완료:")
+        typer.echo(f"  Paired samples: {agg.get('paired_samples', 0)}")
+        if "pearson_r" in agg:
+            typer.echo(f"  Pearson r: {agg['pearson_r']:.4f}")
+            typer.echo(f"  Spearman r: {agg['spearman_r']:.4f}")
+        typer.echo(f"  결과: {out_path}")
+    else:
+        typer.echo("UTMOS 점수가 포함된 결과가 없습니다.", err=True)
+        raise typer.Exit(1)
+
+
 if __name__ == "__main__":
     app()
