@@ -14,3 +14,7 @@ register_metric("itn", "tts_auto_eval.metrics.itn", "ITNMetric")
 
 # Phase 5 메트릭
 register_metric("phoneme", "tts_auto_eval.metrics.phoneme", "PhonemeMetric")
+
+# Phase 6 메트릭
+register_metric("emotion", "tts_auto_eval.metrics.emotion", "EmotionMetric")
+register_metric("multispeaker", "tts_auto_eval.metrics.multispeaker", "MultiSpeakerMetric")

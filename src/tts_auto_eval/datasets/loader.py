@@ -15,6 +15,8 @@ class TestItem(BaseModel):
     expected_spoken: str | None = None
     tags: list[str] = []
     difficulty: str = "medium"
+    emotion: str | None = None
+    speakers: list[dict] | None = None
 
 
 class TestDataset(BaseModel):

@@ -42,6 +42,12 @@ phoneme = [
     "g2pk",
     "g2p-en",
 ]
+emotion = [
+    "transformers",
+]
+multispeaker = [
+    "pyannote-audio",
+]
 
 [project.scripts]
 tts-auto-eval = "tts_auto_eval.cli:app"
