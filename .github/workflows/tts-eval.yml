@@ -1,0 +1,60 @@
+name: TTS Model Evaluation
+
+on:
+  push:
+    paths:
+      - 'checkpoints/**'
+      - 'models/**'
+  pull_request:
+    paths:
+      - 'checkpoints/**'
+      - 'models/**'
+      - 'config*.yaml'
+  workflow_dispatch:
+    inputs:
+      config_path:
+        description: '설정 파일 경로'
+        default: 'config.yaml'
+        type: string
+      compare_with:
+        description: '비교 대상 result.json 경로 (선택)'
+        required: false
+        type: string
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    # GPU 러너 사용 시: runs-on: [self-hosted, gpu]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -e ".[full]"
+
+      - name: Run evaluation
+        run: |
+          CONFIG="${{ github.event.inputs.config_path || 'config.yaml' }}"
+          EXTRA_ARGS=""
+          if [ -n "${{ github.event.inputs.compare_with }}" ]; then
+            EXTRA_ARGS="--compare-with ${{ github.event.inputs.compare_with }}"
+          fi
+          tts-auto-eval run --config "$CONFIG" --output ./eval_results $EXTRA_ARGS
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results-${{ github.sha }}
+          path: ./eval_results/
+          retention-days: 90
+
+      - name: Post PR comment
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python scripts/post_pr_comment.py
