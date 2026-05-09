@@ -14,3 +14,7 @@ register_metric("itn", "tts_auto_eval.metrics.itn", "ITNMetric")
 
 # Phase 5 메트릭
 register_metric("phoneme", "tts_auto_eval.metrics.phoneme", "PhonemeMetric")
+
+# Phase 6 메트릭
+register_metric("mos_calibration", "tts_auto_eval.metrics.mos_calibration", "MOSCalibrationMetric")
+register_metric("profiling", "tts_auto_eval.metrics.profiling", "ProfilingMetric")

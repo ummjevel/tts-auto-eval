@@ -42,6 +42,12 @@ phoneme = [
     "g2pk",
     "g2p-en",
 ]
+calibration = [
+    "scipy",
+]
+profiling = [
+    "psutil",
+]
 
 [project.scripts]
 tts-auto-eval = "tts_auto_eval.cli:app"
