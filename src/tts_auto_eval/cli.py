@@ -164,5 +164,40 @@ def leaderboard(
     typer.echo(f"리더보드 생성 완료: {md_path}")
 
 
+@app.command()
+def ab(
+    config: Path = typer.Option(..., "--config", "-c", help="A/B 테스트 설정 파일 (YAML)"),
+    output: Path = typer.Option("./ab_results", "--output", "-o", help="결과 출력 디렉토리"),
+):
+    """두 TTS 모델을 동일 텍스트로 동시 평가하고 지표별 승률 비교."""
+    from tts_auto_eval.ab_test import generate_ab_report_markdown, run_ab_test
+    from tts_auto_eval.config import Config, ReportConfig, load_ab_config
+
+    ab_cfg = load_ab_config(config)
+    output.mkdir(parents=True, exist_ok=True)
+
+    typer.echo("A/B 테스트 시작...")
+
+    # Build two Config objects from ABTestConfig
+    config_a = Config(
+        model=ab_cfg.model_a,
+        evaluation=ab_cfg.evaluation,
+        dataset=ab_cfg.dataset,
+        report=ReportConfig(output_dir=str(output / "model_a")),
+    )
+    config_b = Config(
+        model=ab_cfg.model_b,
+        evaluation=ab_cfg.evaluation,
+        dataset=ab_cfg.dataset,
+        report=ReportConfig(output_dir=str(output / "model_b")),
+    )
+
+    ab_result = run_ab_test(config_a, config_b)
+
+    # Generate report
+    md_path = generate_ab_report_markdown(ab_result, output / "ab_report.md")
+    typer.echo(f"\nA/B 테스트 완료! 리포트: {md_path}")
+
+
 if __name__ == "__main__":
     app()
